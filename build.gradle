@@ -1,0 +1,27 @@
+// PROJECT-LEVEL build.gradle  (tuong thich Android Studio Panda / AGP 7.4.x)
+buildscript {
+    ext {
+        hilt_version = '2.44'
+        lifecycle_version = '2.5.1'
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }   // PhotoView
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
