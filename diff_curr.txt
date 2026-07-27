@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements FileAdapter.OnIte
 
         fileRepository = new FileRepositoryImpl();
         trashManager = new TrashManager(this);
-        vaultManager = new com.example.myfile.data.vault.PrivateVaultManager(this);
+    private com.example.myfile.data.vault.PrivateVaultManager vaultManager;
         tvCurrentPath = findViewById(R.id.tvCurrentPath);
         emptyState = findViewById(R.id.emptyState);
         selectionToolbar = findViewById(R.id.selectionToolbar);
@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements FileAdapter.OnIte
 
         setupBrowseFeatures();
         setupBottomNavigation();
+    private com.example.myfile.data.vault.PrivateVaultManager vaultManager;
     }
     
     private boolean isRecentTab = false;
@@ -500,6 +501,7 @@ public class MainActivity extends AppCompatActivity implements FileAdapter.OnIte
                         showZipDialog(java.util.Collections.singletonList(item.getPath()));
                     } else if (selected.equals("Unzip (Extract)")) {
                         showUnzipDialog(item.getPath());
+    private com.example.myfile.data.vault.PrivateVaultManager vaultManager;
                     }
                 })
                 .show();
@@ -519,28 +521,7 @@ public class MainActivity extends AppCompatActivity implements FileAdapter.OnIte
         }
     }
 
-
-    private void bulkVault() {
-        java.util.List<String> paths = adapter.getSelectedPaths();
-        if (paths.isEmpty()) {
-            android.widget.Toast.makeText(this, "No items selected", android.widget.Toast.LENGTH_SHORT).show();
-            return;
-        }
-        int successCount = 0;
-        for (String path : paths) {
-            if (vaultManager.moveToVault(path) != null) {
-                successCount++;
-            }
-        }
-        android.widget.Toast.makeText(this, "Moved " + successCount + " items to Vault", android.widget.Toast.LENGTH_SHORT).show();
-        adapter.exitSelectionMode();
-        if (isRecentTab) {
-            loadRecentFiles();
-        } else {
-            loadFiles(currentPath);
-        }
-    }
-
+    private com.example.myfile.data.vault.PrivateVaultManager vaultManager;
     private void bulkDelete() {
         List<String> paths = adapter.getSelectedPaths();
         if (paths.isEmpty()) {
