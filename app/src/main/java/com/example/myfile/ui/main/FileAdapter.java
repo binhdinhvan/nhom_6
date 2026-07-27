@@ -298,4 +298,8 @@ public class FileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             tvHeaderTitle = itemView.findViewById(R.id.tvHeaderTitle);
         }
     }
+
+    public java.util.List<com.example.myfile.data.model.FileItem> getItems() {
+        return this.items;
+    }
 }
