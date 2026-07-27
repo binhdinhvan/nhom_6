@@ -10,8 +10,7 @@ import com.example.myfile.feature.archive.ArchiveDialogs;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.util.List;
+import java.io.FileOutputStream;import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -91,6 +90,5 @@ public class ZipOperation {
             file = new File(destFolder, newName);
             counter++;
         }
-        return file.getName();
-    }
+        return file.getName();    }
 }

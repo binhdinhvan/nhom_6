@@ -19,44 +19,21 @@ public class TrashActivity extends AppCompatActivity implements FileAdapter.OnIt
     private TrashManager trashManager;
     private FileAdapter adapter;
     private TextView tvEmpty;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_trash);
-
-        trashManager = new TrashManager(this);
-        tvEmpty = findViewById(R.id.tvTrashEmpty);
-
+        defaultToolbar = findViewById(R.id.defaultToolbarTrash);
+        selectionToolbar = findViewById(R.id.selectionToolbarTrash);
+        tvSelectionCount = findViewById(R.id.tvSelectionCountTrash);
         RecyclerView recyclerView = findViewById(R.id.recyclerViewTrash);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new FileAdapter(new ArrayList<>(), this);
         recyclerView.setAdapter(adapter);
 
         findViewById(R.id.btnEmptyTrash).setOnClickListener(v -> confirmEmptyTrash());
-
-        loadTrash();
-    }
-
-    private void loadTrash() {
-        int expiredCount = trashManager.cleanupExpiredItems();
-        if (expiredCount > 0) {
-            Toast.makeText(this, expiredCount + " item(s) auto-deleted after 30 days", Toast.LENGTH_SHORT).show();
-        }
-        List<FileItem> items = trashManager.listTrashItems();
-        adapter.updateData(items);
+        items = groupTrashItemsByDate(items);        adapter.updateData(items);
         tvEmpty.setVisibility(items.isEmpty() ? View.VISIBLE : View.GONE);
     }
 
-    @Override
-    public void onItemClick(FileItem item) {
-        showItemOptions(item);
-    }
-
-    @Override
-    public void onItemLongClick(FileItem item) {
-        showItemOptions(item);
-    }
+        adapter.enterSelectionMode();
+        adapter.toggleSelection(item);    }
 
     private void showItemOptions(FileItem item) {
         String[] options = {"Restore", "Delete Permanently"};
@@ -65,30 +42,56 @@ public class TrashActivity extends AppCompatActivity implements FileAdapter.OnIt
                 .setItems(options, (dialog, which) -> {
                     if (which == 0) {
                         boolean ok = trashManager.restore(item.getPath());
-                        Toast.makeText(this, ok ? "Restored successfully" : "Restore failed (destination exists?)", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, ok ? "Restored successfully" : "Restore failed", Toast.LENGTH_SHORT).show();
                         loadTrash();
                     } else {
-                        boolean ok = trashManager.permanentlyDelete(item.getPath());
-                        Toast.makeText(this, ok ? "Deleted permanently" : "Delete failed", Toast.LENGTH_SHORT).show();
-                        loadTrash();
-                    }
+                        confirmSingleDelete(item);                    }
                 })
                 .show();
     }
-
-    private void confirmEmptyTrash() {
+        if (selectionMode) {
+            defaultToolbar.setVisibility(View.GONE);
+            selectionToolbar.setVisibility(View.VISIBLE);
+            tvSelectionCount.setText(count + " selected");
+        } else {
+            defaultToolbar.setVisibility(View.VISIBLE);
+            selectionToolbar.setVisibility(View.GONE);
+        }
+    }
+    
+    private void bulkRestore() {
+        List<FileItem> selected = adapter.getSelectedItems();
+        if (selected.isEmpty()) return;
+        
+        int successCount = 0;
+        for (FileItem item : selected) {
+            if (trashManager.restore(item.getPath())) {
+                successCount++;
+            }
+        }
+        Toast.makeText(this, "Restored " + successCount + " items", Toast.LENGTH_SHORT).show();
+        adapter.exitSelectionMode();
+        loadTrash();
+    }
+    
+    private void confirmBulkDelete() {
+        List<FileItem> selected = adapter.getSelectedItems();
+        if (selected.isEmpty()) return;
+        
         new AlertDialog.Builder(this)
-                .setTitle("Empty Trash?")
-                .setMessage("All items in trash will be permanently deleted.")
-                .setPositiveButton("Empty", (d, w) -> {
-                    trashManager.emptyTrash();
+                .setTitle("Delete Permanently?")
+                .setMessage("Are you sure you want to permanently delete " + selected.size() + " items? This action cannot be undone.")
+                .setPositiveButton("Delete", (d, w) -> {
+                    int successCount = 0;
+                    for (FileItem item : selected) {
+                        if (trashManager.permanentlyDelete(item.getPath())) {
+                            successCount++;
+                        }
+                    }
+                    Toast.makeText(this, "Deleted " + successCount + " items", Toast.LENGTH_SHORT).show();
+                    adapter.exitSelectionMode();
                     loadTrash();
                 })
                 .setNegativeButton("Cancel", null)
-                .show();
-    }
-
-    @Override
-    public void onSelectionChanged(boolean selectionMode, int count) {
-    }
+                .show();    }
 }

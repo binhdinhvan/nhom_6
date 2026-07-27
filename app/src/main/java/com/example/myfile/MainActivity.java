@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements FileAdapter.OnIte
 
     private FileRepository fileRepository;
     private TrashManager trashManager;
+    private com.example.myfile.data.vault.PrivateVaultManager vaultManager;
     private FileAdapter adapter;
     private TextView tvCurrentPath;
     private LinearLayout emptyState;
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements FileAdapter.OnIte
 
         fileRepository = new FileRepositoryImpl();
         trashManager = new TrashManager(this);
+    private com.example.myfile.data.vault.PrivateVaultManager vaultManager;
         tvCurrentPath = findViewById(R.id.tvCurrentPath);
         emptyState = findViewById(R.id.emptyState);
         selectionToolbar = findViewById(R.id.selectionToolbar);
@@ -114,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements FileAdapter.OnIte
         findViewById(R.id.btnSelMove).setOnClickListener(v -> bulkMove());
         findViewById(R.id.btnSelCopy).setOnClickListener(v -> bulkCopy());
         findViewById(R.id.btnSelZip).setOnClickListener(v -> bulkZip());
+        findViewById(R.id.btnSelVault).setOnClickListener(v -> bulkVault());
         findViewById(R.id.btnTrash).setOnClickListener(v -> startActivity(new Intent(this, TrashActivity.class)));
         findViewById(R.id.btnBack).setOnClickListener(v -> navigateUp());
         findViewById(R.id.btnSearchIcon).setOnClickListener(v -> startActivity(new Intent(this, SearchActivity.class)));
@@ -137,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements FileAdapter.OnIte
 
         setupBrowseFeatures();
         setupBottomNavigation();
+    private com.example.myfile.data.vault.PrivateVaultManager vaultManager;
     }
     
     private boolean isRecentTab = false;
@@ -467,7 +471,7 @@ public class MainActivity extends AppCompatActivity implements FileAdapter.OnIte
 
     @Override
     public void onItemLongClick(FileItem item) {
-        List<String> baseOptions = new java.util.ArrayList<>(java.util.Arrays.asList("Rename", "Move", "Copy", "Cut", "Delete", "Share", "Properties", "Zip"));
+        List<String> baseOptions = new java.util.ArrayList<>(java.util.Arrays.asList("Rename", "Move", "Copy", "Cut", "Delete", "Share", "Properties", "Zip", "Move to Vault"));
         if (!item.isDirectory() && item.getName().toLowerCase().endsWith(".zip")) {
             baseOptions.add("Unzip (Extract)");
         }
@@ -497,6 +501,7 @@ public class MainActivity extends AppCompatActivity implements FileAdapter.OnIte
                         showZipDialog(java.util.Collections.singletonList(item.getPath()));
                     } else if (selected.equals("Unzip (Extract)")) {
                         showUnzipDialog(item.getPath());
+    private com.example.myfile.data.vault.PrivateVaultManager vaultManager;
                     }
                 })
                 .show();
@@ -516,6 +521,7 @@ public class MainActivity extends AppCompatActivity implements FileAdapter.OnIte
         }
     }
 
+    private com.example.myfile.data.vault.PrivateVaultManager vaultManager;
     private void bulkDelete() {
         List<String> paths = adapter.getSelectedPaths();
         if (paths.isEmpty()) {

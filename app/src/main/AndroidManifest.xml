@@ -32,6 +32,7 @@
         <activity android:name=".feature.viewer.exif.ExifViewerActivity" android:exported="false" />
         <activity android:name=".feature.viewer.text.TextViewerActivity" android:exported="false" />
 
+        <activity android:name=".ui.vault.PrivateVaultActivity" android:theme="@style/Theme.MyFile" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
